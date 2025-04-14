@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Dashboard from "./pages/Dashboard";
+import Account from "./pages/Account";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/account" 
+              element={
+                <ProtectedRoute>
+                  <Account />
                 </ProtectedRoute>
               } 
             />
