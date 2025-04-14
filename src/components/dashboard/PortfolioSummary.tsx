@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   TrendingUp, 
   TrendingDown,
@@ -16,43 +15,33 @@ interface PortfolioSummaryProps {
 
 const PortfolioSummary = ({ portfolio }: PortfolioSummaryProps) => {
   const [displayValue, setDisplayValue] = useState(0);
-  const initialLoadRef = useRef(true);
   
   useEffect(() => {
-    // Only animate on initial load
-    if (initialLoadRef.current) {
-      // Start from zero
-      setDisplayValue(0);
-      
-      // Animation duration in milliseconds
-      const animationDuration = 1500;
-      // Number of steps for the animation
-      const steps = 30;
-      // Increment per step
-      const increment = portfolio.totalValue / steps;
-      // Timeout between steps
-      const timeout = animationDuration / steps;
-      
-      let currentStep = 0;
-      
-      const intervalId = setInterval(() => {
-        currentStep++;
-        if (currentStep >= steps) {
-          setDisplayValue(portfolio.totalValue);
-          clearInterval(intervalId);
-        } else {
-          setDisplayValue(prev => Math.min(prev + increment, portfolio.totalValue));
-        }
-      }, timeout);
-      
-      // Set initialLoadRef to false so animation won't run again
-      initialLoadRef.current = false;
-      
-      return () => clearInterval(intervalId);
-    } else {
-      // For subsequent updates, just set the value without animation
-      setDisplayValue(portfolio.totalValue);
-    }
+    // Start from zero
+    setDisplayValue(0);
+    
+    // Animation duration in milliseconds
+    const animationDuration = 1500;
+    // Number of steps for the animation
+    const steps = 30;
+    // Increment per step
+    const increment = portfolio.totalValue / steps;
+    // Timeout between steps
+    const timeout = animationDuration / steps;
+    
+    let currentStep = 0;
+    
+    const intervalId = setInterval(() => {
+      currentStep++;
+      if (currentStep >= steps) {
+        setDisplayValue(portfolio.totalValue);
+        clearInterval(intervalId);
+      } else {
+        setDisplayValue(prev => Math.min(prev + increment, portfolio.totalValue));
+      }
+    }, timeout);
+    
+    return () => clearInterval(intervalId);
   }, [portfolio.totalValue]);
   
   const formatCurrency = (value: number) => {
