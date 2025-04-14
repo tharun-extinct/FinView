@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   TrendingUp, 
   TrendingDown,
@@ -15,6 +14,36 @@ interface PortfolioSummaryProps {
 }
 
 const PortfolioSummary = ({ portfolio }: PortfolioSummaryProps) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  
+  useEffect(() => {
+    // Start from zero
+    setDisplayValue(0);
+    
+    // Animation duration in milliseconds
+    const animationDuration = 1500;
+    // Number of steps for the animation
+    const steps = 30;
+    // Increment per step
+    const increment = portfolio.totalValue / steps;
+    // Timeout between steps
+    const timeout = animationDuration / steps;
+    
+    let currentStep = 0;
+    
+    const intervalId = setInterval(() => {
+      currentStep++;
+      if (currentStep >= steps) {
+        setDisplayValue(portfolio.totalValue);
+        clearInterval(intervalId);
+      } else {
+        setDisplayValue(prev => Math.min(prev + increment, portfolio.totalValue));
+      }
+    }, timeout);
+    
+    return () => clearInterval(intervalId);
+  }, [portfolio.totalValue]);
+  
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -56,7 +85,7 @@ const PortfolioSummary = ({ portfolio }: PortfolioSummaryProps) => {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(portfolio.totalValue)}</div>
+          <div className="text-2xl font-bold">{formatCurrency(displayValue)}</div>
           <div className="flex items-center pt-1">
             {renderChangeText(portfolio.dailyChange, portfolio.dailyChangePercent)}
             <span className="text-xs text-muted-foreground ml-2">today</span>
