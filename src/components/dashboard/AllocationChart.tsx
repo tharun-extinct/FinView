@@ -94,16 +94,26 @@ const AllocationChart = ({ getPortfolioAllocation }: AllocationChartProps) => {
             </CardDescription>
           </div>
           
-          <Tabs value={view} onValueChange={(value) => setView(value as 'pie' | 'table')}>
-            <TabsList>
-              <TabsTrigger value="pie">Chart</TabsTrigger>
-              <TabsTrigger value="table">Table</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <TabsList>
+            <TabsTrigger 
+              value="pie" 
+              onClick={() => setView('pie')}
+              data-state={view === 'pie' ? 'active' : 'inactive'}
+            >
+              Chart
+            </TabsTrigger>
+            <TabsTrigger 
+              value="table" 
+              onClick={() => setView('table')}
+              data-state={view === 'table' ? 'active' : 'inactive'}
+            >
+              Table
+            </TabsTrigger>
+          </TabsList>
         </div>
       </CardHeader>
       <CardContent>
-        <TabsContent value="pie" className="mt-0">
+        {view === 'pie' && (
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -127,9 +137,9 @@ const AllocationChart = ({ getPortfolioAllocation }: AllocationChartProps) => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </TabsContent>
+        )}
         
-        <TabsContent value="table" className="mt-0">
+        {view === 'table' && (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -156,7 +166,7 @@ const AllocationChart = ({ getPortfolioAllocation }: AllocationChartProps) => {
               </tbody>
             </table>
           </div>
-        </TabsContent>
+        )}
       </CardContent>
     </Card>
   );
