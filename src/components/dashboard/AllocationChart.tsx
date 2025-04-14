@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   PieChart, 
@@ -94,22 +93,12 @@ const AllocationChart = ({ getPortfolioAllocation }: AllocationChartProps) => {
             </CardDescription>
           </div>
           
-          <TabsList>
-            <TabsTrigger 
-              value="pie" 
-              onClick={() => setView('pie')}
-              data-state={view === 'pie' ? 'active' : 'inactive'}
-            >
-              Chart
-            </TabsTrigger>
-            <TabsTrigger 
-              value="table" 
-              onClick={() => setView('table')}
-              data-state={view === 'table' ? 'active' : 'inactive'}
-            >
-              Table
-            </TabsTrigger>
-          </TabsList>
+          <Tabs value={view} onValueChange={(value) => setView(value as 'pie' | 'table')}>
+            <TabsList>
+              <TabsTrigger value="pie">Chart</TabsTrigger>
+              <TabsTrigger value="table">Table</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </CardHeader>
       <CardContent>
