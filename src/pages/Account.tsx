@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -7,9 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import { useAuth } from '@/contexts/AuthContext';
+import { 
+  getWatchlists, 
+  updateWatchlistName,
+  resetWatchlists 
+} from '@/services/watchlistService';
 import {
   CreditCard,
   DollarSign,
@@ -23,7 +29,10 @@ import {
   Zap,
   Globe,
   Link,
-  FileText
+  FileText,
+  Save,
+  Star,
+  RefreshCw
 } from 'lucide-react';
 
 const Account = () => {
@@ -36,6 +45,21 @@ const Account = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [priceAlerts, setPriceAlerts] = useState(true);
   const [marketNews, setMarketNews] = useState(true);
+  const [watchlists, setWatchlists] = useState<Array<{ id: string, name: string }>>([]);
+  const [watchlistNames, setWatchlistNames] = useState<Record<string, string>>({});
+  
+  // Load watchlists on mount
+  useEffect(() => {
+    const loadedWatchlists = getWatchlists();
+    setWatchlists(loadedWatchlists);
+    
+    // Initialize watchlist names
+    const names: Record<string, string> = {};
+    loadedWatchlists.forEach(wl => {
+      names[wl.id] = wl.name;
+    });
+    setWatchlistNames(names);
+  }, []);
   
   const handleLogout = () => {
     logout();
@@ -76,6 +100,47 @@ const Account = () => {
     toast({
       title: "Invitation sent",
       description: "Your invitation has been sent successfully.",
+    });
+  };
+  
+  const handleWatchlistNameChange = (id: string, value: string) => {
+    setWatchlistNames(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  
+  const handleSaveWatchlistNames = () => {
+    let updatedWatchlists = [...watchlists];
+    
+    Object.entries(watchlistNames).forEach(([id, name]) => {
+      if (name.trim() !== '') {
+        updatedWatchlists = updateWatchlistName(id, name.trim());
+      }
+    });
+    
+    setWatchlists(updatedWatchlists);
+    
+    toast({
+      title: "Watchlists updated",
+      description: "Your watchlist names have been updated successfully.",
+    });
+  };
+  
+  const handleResetWatchlists = () => {
+    const resetList = resetWatchlists();
+    setWatchlists(resetList);
+    
+    // Reset watchlist names
+    const names: Record<string, string> = {};
+    resetList.forEach(wl => {
+      names[wl.id] = wl.name;
+    });
+    setWatchlistNames(names);
+    
+    toast({
+      title: "Watchlists reset",
+      description: "Your watchlists have been reset to default.",
     });
   };
   
@@ -120,6 +185,48 @@ const Account = () => {
                   </Button>
                   <Button onClick={handleAddFunds}>
                     Add Funds
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* Watchlists Section */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-primary" />
+                  <CardTitle>Watchlists</CardTitle>
+                </div>
+                <CardDescription>Customize your watchlist names</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {watchlists.map((watchlist) => (
+                    <div key={watchlist.id} className="space-y-2">
+                      <Label htmlFor={`watchlist-${watchlist.id}`}>
+                        {watchlist.id.replace('watchlist-', 'Watchlist ')}
+                      </Label>
+                      <Input 
+                        id={`watchlist-${watchlist.id}`} 
+                        value={watchlistNames[watchlist.id] || ''}
+                        placeholder={`Watchlist ${watchlist.id.split('-')[1]}`}
+                        onChange={(e) => handleWatchlistNameChange(watchlist.id, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="flex gap-2 justify-end mt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleResetWatchlists}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Reset to Default
+                  </Button>
+                  <Button onClick={handleSaveWatchlistNames}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Watchlists
                   </Button>
                 </div>
               </CardContent>

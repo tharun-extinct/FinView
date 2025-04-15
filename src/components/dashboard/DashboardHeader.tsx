@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   TrendingUp, 
@@ -9,7 +9,9 @@ import {
   Search,
   TrendingDown,
   DollarSign,
-  ShoppingCart
+  ShoppingCart,
+  Star,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,10 +25,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from '@/hooks/use-toast';
+import { getWatchlists } from '@/services/watchlistService';
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [watchlists, setWatchlists] = useState<Array<{ id: string, name: string }>>([]);
+  
+  // Load watchlists on mount
+  useEffect(() => {
+    const loadedWatchlists = getWatchlists();
+    setWatchlists(loadedWatchlists);
+  }, []);
   
   const handleLogout = () => {
     logout();
@@ -92,6 +102,41 @@ const DashboardHeader = () => {
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Watchlists Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <Star className="h-5 w-5" />
+                  <span className="hidden md:inline">Watchlists</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>Your Watchlists</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {watchlists.map((watchlist) => (
+                  <DropdownMenuItem 
+                    key={watchlist.id}
+                    onClick={() => {
+                      navigate('/dashboard');
+                      // We'll handle selecting the watchlist on the dashboard via URL params or context in a future update
+                      toast({
+                        title: "Watchlist selected",
+                        description: `Switched to ${watchlist.name}`,
+                      });
+                    }}
+                  >
+                    <Star className="mr-2 h-4 w-4" />
+                    <span>{watchlist.name}</span>
+                  </DropdownMenuItem>
+                ))}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/account')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Customize Watchlists</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">

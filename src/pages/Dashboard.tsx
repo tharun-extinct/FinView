@@ -15,6 +15,7 @@ import PortfolioSummary from '../components/dashboard/PortfolioSummary';
 import StockList from '../components/dashboard/StockList';
 import PerformanceChart from '../components/dashboard/PerformanceChart';
 import AllocationChart from '../components/dashboard/AllocationChart';
+import WatchlistManager from '../components/dashboard/WatchlistManager';
 
 const Dashboard = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -24,6 +25,9 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   // Key to force re-mount of the PortfolioSummary component
   const [portfolioKey, setPortfolioKey] = useState(Date.now());
+  
+  // Tab state for main content
+  const [activeTab, setActiveTab] = useState<'stocks' | 'watchlist'>('stocks');
 
   // Initialize data on component mount
   useEffect(() => {
@@ -98,13 +102,36 @@ const Dashboard = () => {
             
             {/* Main Dashboard Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-              {/* Stock List */}
+              {/* Left Column - Stocks or Watchlist */}
               <div className="lg:col-span-4">
-                <StockList 
-                  stocks={stocks} 
-                  selectedStock={selectedStock}
-                  onSelectStock={(symbol) => setSelectedStock(symbol)}
-                />
+                <div className="flex mb-4 border-b">
+                  <button 
+                    className={`px-4 py-2 font-medium text-sm ${activeTab === 'stocks' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+                    onClick={() => setActiveTab('stocks')}
+                  >
+                    Stocks
+                  </button>
+                  <button 
+                    className={`px-4 py-2 font-medium text-sm ${activeTab === 'watchlist' ? 'border-b-2 border-primary text-primary' : 'text-muted-foreground'}`}
+                    onClick={() => setActiveTab('watchlist')}
+                  >
+                    Watchlists
+                  </button>
+                </div>
+
+                {activeTab === 'stocks' ? (
+                  <StockList 
+                    stocks={stocks} 
+                    selectedStock={selectedStock}
+                    onSelectStock={(symbol) => setSelectedStock(symbol)}
+                  />
+                ) : (
+                  <WatchlistManager
+                    stocks={stocks}
+                    selectedStock={selectedStock}
+                    onSelectStock={(symbol) => setSelectedStock(symbol)}
+                  />
+                )}
               </div>
               
               {/* Charts */}

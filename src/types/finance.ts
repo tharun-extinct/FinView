@@ -34,6 +34,13 @@ export interface Portfolio {
   holdings: Holding[];
 }
 
+// Watchlist type
+export interface Watchlist {
+  id: string;
+  name: string;
+  stocks: string[]; // Array of stock IDs
+}
+
 // Portfolio allocation by sector
 export interface PortfolioAllocation {
   sector: string;
