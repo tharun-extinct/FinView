@@ -22,9 +22,14 @@ const Dashboard = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState<Timeframe>('1M');
   const [selectedStock, setSelectedStock] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Key to force re-mount of the PortfolioSummary component
+  const [portfolioKey, setPortfolioKey] = useState(Date.now());
 
   // Initialize data on component mount
   useEffect(() => {
+    // Each time Dashboard mounts, update the key to force a re-mount of PortfolioSummary
+    setPortfolioKey(Date.now());
+    
     initializeStocksData();
     loadData();
     
@@ -85,8 +90,11 @@ const Dashboard = () => {
       <main className="flex-1 container mx-auto px-4 py-6">
         {portfolio && (
           <>
-            {/* Portfolio Summary */}
-            <PortfolioSummary portfolio={portfolio} />
+            {/* Portfolio Summary with key to force re-mount */}
+            <PortfolioSummary 
+              key={portfolioKey} 
+              portfolio={portfolio} 
+            />
             
             {/* Main Dashboard Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">

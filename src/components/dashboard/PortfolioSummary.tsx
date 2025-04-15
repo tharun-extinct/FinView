@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   TrendingUp, 
@@ -16,21 +15,18 @@ interface PortfolioSummaryProps {
 
 const PortfolioSummary = ({ portfolio }: PortfolioSummaryProps) => {
   const [displayValue, setDisplayValue] = useState(0);
-  const initialLoadRef = useRef(true);
+  
+  const initialLoadComplete = useRef(false);
   
   useEffect(() => {
-    // Only animate on initial load
-    if (initialLoadRef.current) {
-      // Start from zero
+    if (!initialLoadComplete.current) {
+      console.log("Starting initial animation");
+      
       setDisplayValue(0);
       
-      // Animation duration in milliseconds
       const animationDuration = 1500;
-      // Number of steps for the animation
       const steps = 30;
-      // Increment per step
       const increment = portfolio.totalValue / steps;
-      // Timeout between steps
       const timeout = animationDuration / steps;
       
       let currentStep = 0;
@@ -45,12 +41,10 @@ const PortfolioSummary = ({ portfolio }: PortfolioSummaryProps) => {
         }
       }, timeout);
       
-      // Set initialLoadRef to false so animation won't run again
-      initialLoadRef.current = false;
+      initialLoadComplete.current = true;
       
       return () => clearInterval(intervalId);
     } else {
-      // For subsequent updates, just set the value without animation
       setDisplayValue(portfolio.totalValue);
     }
   }, [portfolio.totalValue]);
