@@ -2,16 +2,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
+  TrendingUp, 
   LogOut, 
   User,
   Bell,
   Search,
-  Star,
-  Settings,
-  TrendingUp,
   TrendingDown,
   DollarSign,
-  ShoppingCart
+  ShoppingCart,
+  Star,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,7 @@ const DashboardHeader = () => {
   const navigate = useNavigate();
   const [watchlists, setWatchlists] = useState<Array<{ id: string, name: string }>>([]);
   
+  // Load watchlists on mount
   useEffect(() => {
     const loadedWatchlists = getWatchlists();
     setWatchlists(loadedWatchlists);
@@ -86,11 +87,7 @@ const DashboardHeader = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-2">
-              <img 
-                src="/lovable-uploads/549ef229-4251-4f3e-866c-48125edfbb65.png" 
-                alt="FinView Logo" 
-                className="h-6 w-6"
-              />
+              <TrendingUp className="h-6 w-6 text-primary" />
               <h1 className="text-xl font-bold hidden md:block">FinView</h1>
             </Link>
             
@@ -105,6 +102,7 @@ const DashboardHeader = () => {
           </div>
           
           <div className="flex items-center gap-4">
+            {/* Watchlists Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center gap-2">
@@ -120,6 +118,7 @@ const DashboardHeader = () => {
                     key={watchlist.id}
                     onClick={() => {
                       navigate('/dashboard');
+                      // We'll handle selecting the watchlist on the dashboard via URL params or context in a future update
                       toast({
                         title: "Watchlist selected",
                         description: `Switched to ${watchlist.name}`,
