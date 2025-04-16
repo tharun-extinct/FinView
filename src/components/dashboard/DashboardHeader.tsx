@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -6,7 +7,11 @@ import {
   Bell,
   Search,
   Star,
-  Settings
+  Settings,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  ShoppingCart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
