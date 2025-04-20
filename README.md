@@ -2,7 +2,7 @@
 
 ## Project info
 
-**URL**: https://preview--finview-dashboard-sim.lovable.app/
+**URL**: https://preview--fin-view.lovable.app/
 
 Follow these steps:
 
